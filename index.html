@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+    <header>
+        <center>
+            <br>
+            <h2>Snake Game</h2>
+        </center>
+    </header>
+
+    <main>
+        <canvas width="512px"1 height="512px" id="cobra" class="canvas"></canvas>
+        <div class="score">
+            <p>Pontuação:</p>
+            <p id="pontos">0</p>
+        </div>
+    </main>
+    
+
+    <script>
+        let canvas = document.getElementById("cobra");
+        let ctx = canvas.getContext("2d");
+        let grid = 32;
+  
+        let cobra = [];
+        cobra[0] = {
+            x: 8*grid,
+            y: 8*grid
+        };
+        
+        let direction = "right";
+
+        let comida = {
+            x: Math.floor(Math.random()*15+1)*grid,
+            y: Math.floor(Math.random()*15+1)*grid
+        }
+
+        function score(){
+            document.getElementById("pontos").innerHTML = cobra.length-1;
+        }
+        
+        function bg(){
+           ctx.fillStyle = "black";
+           ctx.fillRect(0,0,16*grid,16*grid);
+        }
+        
+        function cobraori(){
+            for(i = 0; i < cobra.length; i++){
+                ctx.fillStyle = "green";
+                ctx.fillRect(cobra[i].x, cobra[i].y, grid, grid);
+
+            }
+        }
+        
+        function comidaori(){
+            ctx.fillStyle = "red";
+            ctx.fillRect(comida.x,comida.y, grid, grid);
+        }
+
+        function fim(){
+            clearInterval(game);
+            alert('Fim de Jogo: ');
+        }
+        
+        document.addEventListener('keydown', update);
+        
+        function update(event) {
+            if (event.keyCode == 37 && direction != 'right') direction = 'left';
+            if (event.keyCode == 38 && direction != 'down') direction = 'up';
+            if (event.keyCode == 39 && direction != 'left') direction = 'right';
+            if (event.keyCode == 40 && direction != 'up') direction = 'down';
+            if (event.key == "a" && direction != 'right') direction = 'left';
+            if (event.key == "w" && direction != 'down') direction = 'up';
+            if (event.key == "d" && direction != 'left') direction = 'right';
+            if (event.key == "s" && direction != 'up') direction = 'down';
+        }
+        
+        function iniciar() {
+            if (cobra[0].x > 15*grid) fim();
+            if (cobra[0].x < 0) fim();
+            if (cobra[0].y > 15*grid) fim();
+            if (cobra[0].y < 0) fim();
+        
+            for (i = 1; i < cobra.length; i++) {
+                if (cobra[0].x == cobra[i].x && cobra[0].y == cobra[i].y){
+                    fim();
+        
+                }
+            }
+
+        
+            bg();
+            cobraori();
+            comidaori();
+            score();
+        
+            let cobraX = cobra[0].x;
+            let cobraY = cobra[0].y;
+        
+            if (direction == "right") cobraX +=grid;
+            if (direction == "left") cobraX -=grid;
+            if (direction == "up") cobraY -=grid;
+            if (direction == "down") cobraY +=grid;
+        
+            if (cobraX != comida.x || cobraY != comida.y) {
+                cobra.pop();
+            } else {
+                comida.x = Math.floor(Math.random()*15.1)*grid;
+                comida.y = Math.floor(Math.random()*15.1)*grid;
+            }
+        
+            let newhead = {
+                x: cobraX,
+                y: cobraY
+            };
+        
+            cobra.unshift(newhead);
+        }
+        
+        let game = setInterval(iniciar, 90);
+        
+    </script>
+</body>
+</html>
